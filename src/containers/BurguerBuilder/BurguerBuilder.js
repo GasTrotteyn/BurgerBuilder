@@ -9,7 +9,7 @@ import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from "react-redux";
-import * as burguerBuilderActions from "../../store/actions/index";
+import * as actions from "../../store/actions/index";
 
 class BurguerBuilder extends Component {
     state = {
@@ -40,6 +40,7 @@ class BurguerBuilder extends Component {
     };
 
     purchaseContinueHandler = () => {
+        this.props.onPurchaseInit();
         this.props.history.push("/checkout");
     };
 
@@ -97,20 +98,18 @@ class BurguerBuilder extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice,
-        error: state.error,
+        ings: state.bur.ingredients,
+        price: state.bur.totalPrice,
+        error: state.bur.error,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addedItemHandler: (ingName) =>
-            dispatch(burguerBuilderActions.addIngredient(ingName)),
-        removedItemHandler: (ingName) =>
-            dispatch(burguerBuilderActions.removeIngredient(ingName)),
-        fetchIngredients: () =>
-            dispatch(burguerBuilderActions.fetchIngredients()),
+        addedItemHandler: (ingName) => dispatch(actions.addIngredient(ingName)),
+        removedItemHandler: (ingName) => dispatch(actions.removeIngredient(ingName)),
+        fetchIngredients: () => dispatch(actions.fetchIngredients()),
+        onPurchaseInit: () => dispatch(actions.purchaseBurgerInit()),
     };
 };
 

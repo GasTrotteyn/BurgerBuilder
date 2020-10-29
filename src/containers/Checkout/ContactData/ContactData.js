@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import axios from "../../../axios-orders";
 import { connect } from "react-redux";
+import * as actions from "../../../store/actions/index";
 
 import Button from "../../../components/UI/Button/Button";
 import classes from "./ContactData.module.css";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
+import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler";
 
 class ContactData extends Component {
     state = {
@@ -90,7 +92,6 @@ class ContactData extends Component {
                 valid: true,
             },
         },
-        loading: false,
         formIsValid: false,
     };
 
@@ -106,13 +107,7 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData,
         };
-        axios
-            .post("/orders.json", order)
-            .then((response) => {
-                this.setState({ loading: false });
-                this.props.history.push("/");
-            })
-            .catch((error) => this.setState({ loading: false }));
+        this.props.onOrderBurger(order);
     };
 
     checkValidity = (value, rules) => {
@@ -149,7 +144,7 @@ class ContactData extends Component {
         for (let identifier in updatedOrderForm) {
             formIsValid = updatedOrderForm[identifier].valid && formIsValid;
         }
-        console.log(formIsValid);
+        //console.log(formIsValid);
         this.setState({
             orderForm: updatedOrderForm,
             formIsValid: formIsValid,
@@ -187,7 +182,7 @@ class ContactData extends Component {
                 </Button>
             </form>
         );
-        if (this.state.loading) {
+        if (this.props.loading) {
             form = <Spinner />;
         }
         return (
@@ -201,9 +196,19 @@ class ContactData extends Component {
 
 const mapSateToProps = (state) => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice,
+        ings: state.bur.ingredients,
+        price: state.bur.totalPrice,
+        loading: state.ord.loading,
     };
 };
 
-export default connect(mapSateToProps)(ContactData);
+const mapDispachToProps = (dispatch) => {
+    return {
+        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData)),
+    };
+};
+
+export default connect(
+    mapSateToProps,
+    mapDispachToProps
+)(withErrorHandler(ContactData, axios));
