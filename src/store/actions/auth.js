@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import * as actionTypes from "./actionsTypes";
+import info from "../apiKey.json";
 
 export const authStart = () => {
     return {
@@ -28,7 +29,7 @@ export const auth = (email, password, isSignUp) => {
     return (dispatch) => {
         //acá llamré al backend y devolveré el token con authSuccess
         dispatch(authStart());
-        const apiKey = "AIzaSyDrmICp3e0iEFRs8Wcs7wdfFDXkJqfuKQ4";
+        const apiKey = info.apiKey;
         const data = {
             email: email,
             password: password,
