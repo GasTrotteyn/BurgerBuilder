@@ -10,6 +10,13 @@
     flex-direction: column;
 }
 
+.Message {
+    text-align: center;
+    color: #c5ab93;
+    border-radius: 3px;
+    background-color: #8f5c2c;
+}
+
 @media (min-width: 600px) {
     .Auth {
         width: 500px;

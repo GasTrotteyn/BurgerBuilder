@@ -18,6 +18,17 @@ class BurguerBuilder extends Component {
 
     componentDidMount() {
         this.props.fetchIngredients();
+        const tokenInStorage = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+        const expireDate = localStorage.getItem("expireDate");
+
+        //console.log(tokenInStorage, userId, expireDate);
+        if (tokenInStorage) {
+            this.props.onAutoLog(tokenInStorage, userId, expireDate);
+        }
+        // else {
+        //     this.props.onLogout();
+        // }
     }
 
     updatePurchaseState() {
@@ -32,7 +43,11 @@ class BurguerBuilder extends Component {
     }
 
     purchaseHandler = () => {
-        this.setState({ purchasing: true });
+        if (this.props.isAuth) {
+            this.setState({ purchasing: true });
+        } else {
+            this.props.history.push("/authorization");
+        }
     };
 
     purchaseCancelHandler = () => {
@@ -53,11 +68,7 @@ class BurguerBuilder extends Component {
         }
         let orderSummary = null;
 
-        let burger = this.props.error ? (
-            <p>the Ingredients can't be loaded!</p>
-        ) : (
-            <Spinner />
-        );
+        let burger = this.props.error ? <p>the Ingredients can't be loaded!</p> : <Spinner />;
 
         if (this.props.ings) {
             burger = (
@@ -70,6 +81,7 @@ class BurguerBuilder extends Component {
                         purchasable={this.updatePurchaseState()}
                         ordered={this.purchaseHandler}
                         price={this.props.price}
+                        isAuth={this.props.isAuth}
                     />
                 </Auxiliary>
             );
@@ -84,10 +96,7 @@ class BurguerBuilder extends Component {
         }
         return (
             <Auxiliary>
-                <Modal
-                    show={this.state.purchasing}
-                    modalClosed={this.purchaseCancelHandler}
-                >
+                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
                     {orderSummary}
                 </Modal>
                 {burger}
@@ -101,6 +110,7 @@ const mapStateToProps = (state) => {
         ings: state.bur.ingredients,
         price: state.bur.totalPrice,
         error: state.bur.error,
+        isAuth: state.auth.token !== null,
     };
 };
 
@@ -110,10 +120,9 @@ const mapDispatchToProps = (dispatch) => {
         removedItemHandler: (ingName) => dispatch(actions.removeIngredient(ingName)),
         fetchIngredients: () => dispatch(actions.fetchIngredients()),
         onPurchaseInit: () => dispatch(actions.purchaseBurgerInit()),
+        onAutoLog: (token, userId, expireDate) => dispatch(actions.autoLog(token, userId, expireDate)),
+        onLogout: () => dispatch(actions.authLogout()),
     };
 };
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(withErrorHandler(BurguerBuilder, axios));
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurguerBuilder, axios));

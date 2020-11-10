@@ -107,7 +107,7 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData,
         };
-        this.props.onOrderBurger(order);
+        this.props.onOrderBurger(order, this.props.token);
     };
 
     checkValidity = (value, rules) => {
@@ -133,10 +133,7 @@ class ContactData extends Component {
             ...updatedOrderForm[inputIdentifier],
         };
         updatedElementForm.value = event.target.value;
-        updatedElementForm.valid = this.checkValidity(
-            updatedElementForm.value,
-            updatedElementForm.validation
-        );
+        updatedElementForm.valid = this.checkValidity(updatedElementForm.value, updatedElementForm.validation);
         updatedElementForm.touched = true;
         updatedOrderForm[inputIdentifier] = updatedElementForm;
 
@@ -172,9 +169,7 @@ class ContactData extends Component {
                         invalid={!formElement.config.valid}
                         touched={formElement.config.touched}
                         shouldValidate={formElement.config.validation}
-                        changed={(event) =>
-                            this.inputChangedHandler(event, formElement.id)
-                        }
+                        changed={(event) => this.inputChangedHandler(event, formElement.id)}
                     />
                 ))}
                 <Button btnType="Success" disabled={!this.state.formIsValid}>
@@ -199,16 +194,14 @@ const mapSateToProps = (state) => {
         ings: state.bur.ingredients,
         price: state.bur.totalPrice,
         loading: state.ord.loading,
+        token: state.auth.token,
     };
 };
 
 const mapDispachToProps = (dispatch) => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData)),
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token)),
     };
 };
 
-export default connect(
-    mapSateToProps,
-    mapDispachToProps
-)(withErrorHandler(ContactData, axios));
+export default connect(mapSateToProps, mapDispachToProps)(withErrorHandler(ContactData, axios));

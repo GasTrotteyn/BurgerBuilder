@@ -25,6 +25,23 @@ export const authFail = (error) => {
     };
 };
 
+export const authLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("expireDate");
+    localStorage.removeItem("userId");
+    return {
+        type: actionTypes.AUTH_LOGOUT,
+    };
+};
+
+export const setTimeLogout = (expirationTime) => {
+    return (dispatch) => {
+        setTimeout(() => {
+            dispatch(authLogout());
+        }, expirationTime * 1000);
+    };
+};
+
 export const auth = (email, password, isSignUp) => {
     return (dispatch) => {
         //acá llamré al backend y devolveré el token con authSuccess
@@ -42,11 +59,33 @@ export const auth = (email, password, isSignUp) => {
         axios
             .post(url + apiKey, data)
             .then((resp) => {
-                console.log(resp);
+                //console.log(resp);
+                const expireDate = new Date(new Date().getTime() + resp.data.expiresIn * 1000);
+                //const expireDate = new Date(new Date().getTime() + 10 * 1000);
+                localStorage.setItem("token", resp.data.idToken);
+                localStorage.setItem("userId", resp.data.localId);
+                localStorage.setItem("expireDate", expireDate);
                 dispatch(authSuccess(resp.data.idToken, resp.data.localId));
+                dispatch(setTimeLogout(resp.data.expiresIn));
             })
             .catch((error) => {
                 dispatch(authFail(error.response.data.error));
             });
+    };
+};
+
+export const autoLog = (token, userId, expireDate) => {
+    //console.log("expireDate from localStr:   " + expireDate + "Ahora con getTime:  " + new Date(new Date().getTime()));
+    console.log(
+        "Esta sesion se cerrará en: " + (new Date(expireDate) - new Date(new Date().getTime())) / 1000 + "segundos"
+    );
+    return (dispatch) => {
+        if (new Date(expireDate) > new Date(new Date().getTime())) {
+            dispatch(authStart());
+            dispatch(authSuccess(token, userId));
+            dispatch(setTimeLogout((new Date(expireDate) - new Date(new Date().getTime())) / 1000));
+        } else {
+            dispatch(authLogout());
+        }
     };
 };
