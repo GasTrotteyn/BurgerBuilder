@@ -75,9 +75,8 @@ export const auth = (email, password, isSignUp) => {
 };
 
 export const autoLog = (token, userId, expireDate) => {
-    //console.log("expireDate from localStr:   " + expireDate + "Ahora con getTime:  " + new Date(new Date().getTime()));
     console.log(
-        "Esta sesion se cerrará en: " + (new Date(expireDate) - new Date(new Date().getTime())) / 1000 + "segundos"
+        "This session will be closed in: " + (new Date(expireDate) - new Date(new Date().getTime())) / 1000 + "seconds"
     );
     return (dispatch) => {
         if (new Date(expireDate) > new Date(new Date().getTime())) {

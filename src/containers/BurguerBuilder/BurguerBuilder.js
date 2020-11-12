@@ -22,13 +22,9 @@ class BurguerBuilder extends Component {
         const userId = localStorage.getItem("userId");
         const expireDate = localStorage.getItem("expireDate");
 
-        //console.log(tokenInStorage, userId, expireDate);
         if (tokenInStorage) {
             this.props.onAutoLog(tokenInStorage, userId, expireDate);
         }
-        // else {
-        //     this.props.onLogout();
-        // }
     }
 
     updatePurchaseState() {

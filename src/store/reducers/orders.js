@@ -1,5 +1,5 @@
 import * as actionsTypes from "../actions/actionsTypes";
-import { updatedObject } from "../utillity";
+import { updatedObject } from "../../shared/utillity";
 
 const initialState = {
     orders: [],
@@ -31,7 +31,6 @@ const fetchOrdersStart = (state, action) => {
 };
 
 const setOrders = (state, action) => {
-    //console.log("orders seteadas por fetch!!!!");
     return updatedObject(state, { loadingOrders: false, orders: action.orders });
 };
 

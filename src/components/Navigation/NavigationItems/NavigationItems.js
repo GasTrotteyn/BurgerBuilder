@@ -2,13 +2,11 @@ import React from "react";
 import classes from "./NavigationItems.module.css";
 import NavigationItem from "./NavigationItem/NavigationItem";
 import Button from "../../UI/Button/Button";
-//import { connect } from "react-redux";
 
 const NavigationiItems = (props) => {
-    //console.log(this.props.login);
     let isLogin = { message: "You are logged", class: "Success" };
     if (!props.isAuth) {
-        isLogin = { message: "You are a extranger", class: "Danger" };
+        isLogin = { message: "You are an extranger", class: "Danger" };
     }
 
     return (

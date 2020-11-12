@@ -8,6 +8,7 @@ import classes from "./ContactData.module.css";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler";
+import { checkValidity } from "../../../shared/utillity";
 
 class ContactData extends Component {
     state = {
@@ -47,8 +48,9 @@ class ContactData extends Component {
                 value: "",
                 validation: {
                     required: true,
-                    minlength: 5,
-                    maxlength: 5,
+                    isNumeric: true,
+                    minLength: 5,
+                    maxLength: 6,
                 },
                 valid: false,
                 touched: false,
@@ -75,6 +77,7 @@ class ContactData extends Component {
                 value: "",
                 validation: {
                     required: true,
+                    isEmail: true,
                 },
                 valid: false,
                 touched: false,
@@ -106,22 +109,9 @@ class ContactData extends Component {
             ingredients: this.props.ings,
             price: this.props.price,
             orderData: formData,
+            userId: this.props.userId,
         };
         this.props.onOrderBurger(order, this.props.token);
-    };
-
-    checkValidity = (value, rules) => {
-        let isValid = true;
-        if (rules.required) {
-            isValid = value.trim() !== "" && isValid;
-        }
-        if (rules.minlength) {
-            isValid = value.length >= rules.minlength && isValid;
-        }
-        if (rules.maxlength) {
-            isValid = value.length <= rules.maxlength && isValid;
-        }
-        return isValid;
     };
 
     inputChangedHandler = (event, inputIdentifier) => {
@@ -133,7 +123,7 @@ class ContactData extends Component {
             ...updatedOrderForm[inputIdentifier],
         };
         updatedElementForm.value = event.target.value;
-        updatedElementForm.valid = this.checkValidity(updatedElementForm.value, updatedElementForm.validation);
+        updatedElementForm.valid = checkValidity(updatedElementForm.value, updatedElementForm.validation);
         updatedElementForm.touched = true;
         updatedOrderForm[inputIdentifier] = updatedElementForm;
 
@@ -141,7 +131,6 @@ class ContactData extends Component {
         for (let identifier in updatedOrderForm) {
             formIsValid = updatedOrderForm[identifier].valid && formIsValid;
         }
-        //console.log(formIsValid);
         this.setState({
             orderForm: updatedOrderForm,
             formIsValid: formIsValid,
@@ -195,6 +184,7 @@ const mapSateToProps = (state) => {
         price: state.bur.totalPrice,
         loading: state.ord.loading,
         token: state.auth.token,
+        userId: state.auth.userId,
     };
 };
 

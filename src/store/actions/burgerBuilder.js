@@ -31,9 +31,7 @@ export const showErrorFetchingIngredients = () => {
 export const fetchIngredients = () => {
     return (dispatch) => {
         axios
-            .get(
-                "https://react-my-burger-c7907.firebaseio.com/ingredients.json"
-            )
+            .get("https://react-my-burger-c7907.firebaseio.com/ingredients.json")
             .then((resp) => {
                 dispatch(setIngerdients(resp.data));
             })
